@@ -1,0 +1,169 @@
+setwd("/Users/lizi/Desktop/RData")
+load("gls2016.RData")
+load("pls2016.RData")
+class(pls2016)
+length(pls2016)
+class(pls2016[[1]])
+names(pls2016[[1]])
+str(pls2016[[1]])
+head(pls2016[[1]]$leagues)
+str(pls2016[[1]]$leagues)
+head(pls2016[[1]]$playing_positions)
+str(pls2016[[1]]$playing_positions)
+as.factor(pls2016[[1]]$playing_positions$name)
+head(pls2016[[1]]$teams)
+str(pls2016[[1]]$teams)
+as.factor(pls2016[[1]]$teams$name)
+head(pls2016[[1]]$players)
+str(pls2016[[1]]$players)
+
+p_players2016 <-  data.frame()
+p_playing_positions <- data.frame()
+p_teams <- data.frame()
+p_leagues <- data.frame()
+for( i in 1:length(pls2016)) {
+  p_players2016 <- rbind(p_players2016, pls2016[[i]]$players)
+  p_playing_positions <- rbind(p_playing_positions, pls2016[[i]]$playing_positions)
+  p_teams <- rbind(p_teams, pls2016[[i]]$teams)
+  p_leagues <- rbind(p_leagues, pls2016[[i]]$leagues)
+  
+}
+p_players2016 <- unique(p_players2016)
+p_playing_positions <- unique(p_playing_positions)
+p_teams <- unique(p_teams)
+p_leagues <- unique(p_leagues)
+dim(p_playing_positions)
+dim(p_players2016)
+dim(p_teams)
+dim(p_leagues)
+names(p_teams)[names(p_teams) =="id"] <- "team_id"
+names(p_teams)
+names(p_playing_positions)[names(p_playing_positions) =="id"] <- "playing_position__id"
+names(p_playing_positions)
+g_games <-  do.call('rbind', lapply(gls2016, function(x) x$games))
+g_home_teams <- do.call('rbind', lapply(gls2016, function(x) x$home_teams))
+g_leagues <- do.call('rbind', lapply(gls2016, function(x) x$leagues))
+g_away_teams <- do.call('rbind', lapply(gls2016, function(x) x$away_teams))
+g_winning_teams <- do.call('rbind', lapply(gls2016, function(x) x$winning_teams))
+g_seasons <- do.call('rbind', lapply(gls2016, function(x) x$seasons))
+g_venues <- do.call('rbind', lapply(gls2016, function(x) x$venues))
+g_officials <- do.call('rbind', lapply(gls2016, function(x) x$officials))
+g_players <- do.call('rbind', lapply(gls2016, function(x) x$players))
+g_teams <- do.call('rbind', lapply(gls2016, function(x) x$teams))
+g_opponents <- do.call('rbind', lapply(gls2016, function(x) x$opponents))
+g_game_logs <- do.call('rbind', lapply(gls2016, function(x) x$game_logs))
+head(g_game_logs)
+tail(g_game_logs)
+summary(g_game_logs)
+unique(g_seasons$id)
+unique(g_seasons$name)
+unique(g_seasons$current_interval_type)
+unique(g_seasons$league_id)
+length(unique(g_games$id))
+length(unique(g_teams$id))
+length(unique(g_teams$division_id))
+colnames(g_games)[colnames(g_games)=="id"] <- "g_games_id"
+colnames(g_home_teams)[colnames(g_home_teams)=="id"] <- "g_home_teams_id"
+colnames(g_leagues)[colnames(g_leagues)=="id"] <- "g_leagues_id"
+colnames(g_away_teams)[colnames(g_away_teams)=="id"] <- "g_away_teams_id"
+colnames(g_winning_teams)[colnames(g_winning_teams)=="id"] <- "g_winning_teams_id"
+colnames(g_seasons)[colnames(g_seasons)=="id"] <- "g_seasons_id"
+colnames(g_venues)[colnames(g_venues)=="id"] <- "g_venues_id"
+colnames(g_officials)[colnames(g_officials)=="id"] <- "g_officials_id"
+colnames(g_players)[colnames(g_players)=="id"] <- "g_players_id"
+colnames(g_teams)[colnames(g_teams)=="id"] <- "g_teams_id"
+colnames(g_opponents)[colnames(g_opponents)=="id"] <- "g_opponents_id"
+colnames(g_game_logs)[colnames(g_game_logs)=="id"] <- "g_game_logs_id"
+
+names(p_players2016)[names(p_players2016)=="id"]<-"player_id"
+m1<-cbind(team_id=g_game_logs$team_id,pitcher_earned_runs=g_game_logs$pitcher_earned_runs,batting_average=g_game_logs$batting_average,wins=g_game_logs$wins,innings_pitched=g_game_logs$innings_pitched,outfield_assists=g_game_logs$outfield_assists,on_base_percentage=g_game_logs$on_base_percentage,fielding_errors=g_game_logs$fielding_errors)
+m1 = na.omit(m1)
+m2<-merge(p_teams,m1,by="team_id")
+m3<-m2[,c(1,9,16:22)]
+pitcher_era_sum <- aggregate(as.numeric(m3$pitcher_earned_runs), by=list(m3$team_id), FUN=sum)
+innings_pitched_sum <- aggregate(as.numeric(m3$innings_pitched), by=list(m3$team_id), FUN=sum)
+wins_sum<-aggregate(as.numeric(m3$wins), by=list(m3$team_id), FUN=sum)
+batting_average_sum<-aggregate(as.numeric(m3$batting_average),by=list(m3$team_id),FUN=sum)
+on_base_percentage_sum<-aggregate(as.numeric(m3$on_base_percentage), by=list(m3$team_id), FUN=sum)
+outfield_assists_sum<-aggregate(as.numeric(m3$outfield_assists), by=list(m3$team_id), FUN=sum)
+fielding_errors_sum<-aggregate(as.numeric(m3$fielding_errors), by=list(m3$team_id), FUN=sum)
+
+
+m4<-merge(pitcher_era_sum,innings_pitched_sum,by="Group.1")
+names(m4)[names(m4)=="x.x"]<-"pitcher_era_sum"
+names(m4)[names(m4)=="x.y"]<-"innings_pitched_sum"
+
+m5<-merge(m4,wins_sum,by="Group.1")
+m6<-merge(m5,batting_average_sum,by="Group.1")
+names(m6)[names(m6)=="x.x"]<-"team_wins"
+names(m6)[names(m6)=="x.y"]<-"batting_average"
+
+m7<-merge(m6,on_base_percentage_sum,by="Group.1")
+m8<-merge(m7,outfield_assists_sum, by="Group.1")
+names(m8)[names(m8)=="x.x"]<-"on_base_percentage"
+names(m8)[names(m8)=="x.y"]<-"outfield_assists_sum"
+m9<-merge(m8,as.fielding_errors_sum, by="Group.1")
+
+names(m9)[names(m9)=="x"]<-"fielding_errors"
+names(m9)[names(m9)=="Group.1"]<-"team_id"
+hist(m9$on_base_percentage)
+hist(m9$outfield_assists_sum)
+hist(m9$batting_average)
+hist(m9$pitcher_era_sum)
+hist(m9$fielding_errors)
+
+norm1<-m9[,c("pitcher_era_sum","batting_average","innings_pitched_sum","team_wins","outfield_assists_sum","on_base_percentage","fielding_errors")]
+norm2<-apply(norm1, 2, scale)
+norm2<-as.data.frame(norm2)
+norm3<-cbind(m9$team_id,norm2)
+norm3<-as.data.frame(norm3)
+names(norm3)[names(norm3)=="m9$team_id"]<-"team_id"
+norm4<-merge(p_teams,norm3,by="team_id")
+norm5<-norm4[,c(1,9,16:22)]
+summary(norm5)
+
+norm5$pitcher_era_calc<-(as.numeric(norm5$pitcher_era_sum)/as.numeric(norm5$innings_pitched_sum))*9
+norm5$combined_metric<-(as.numeric(norm5$pitcher_era_calc)*0.25)+(as.numeric(norm5$batting_average)*0.25)+(as.numeric(norm5$on_base_percentage)*0.25)+(as.numeric(norm5$outfield_assists_sum)*0.25)-(as.numeric(norm5$fielding_errors))
+norm5<-as.data.frame(norm5)
+norm5$combined_metric=as.numeric(norm5$combined_metric)
+norm6<-norm5[,c(6,11)]
+norm6$team_wins=as.numeric(norm6$team_wins)
+norm6$combined_metric=as.numeric(norm6$combined_metric)
+
+result1<-norm5[order(-norm5$combined_metric),]
+result2<-merge(p_teams,norm5,by="team_id")
+result3<-result2[as.numeric(c(1,10,16:24))]
+result4<-result3[order(-result3$combined_metric),]
+result5<-result4[,c(2,11)]
+
+library(corrplot)
+
+metrics_table<-norm5[,c(4,7:10)]
+m<-cor(metrics_table[,1:5]) 
+corrplot(m,method="circle")
+
+linearmodel1<-lm(formula=team_wins~combined_metric, data=norm6)
+plot(linearmodel1)
+
+summary(linearmodel1)
+mean(linearmodel1$residuals)
+acf(linearmodel1$residuals)
+
+result1<-norm5[order(-norm5$combined_metric),]
+result2<-merge(p_teams,norm5,by="team_id")
+result3<-result2[as.numeric(c(1,10,16:24))]
+result4<-result3[order(-result3$combined_metric),]
+result5<-result4[,c(2,11)]
+
+linearmodel1<-lm(team_wins~combined_metric, data = result4)
+plot(linearmodel1)
+mean(linearmodel1$residuals)
+library(ggplot2)
+install.packages(ggplot2)
+acf(linearmodel1$residuals)
+lawstat::runs.test(linearmodel1$residuals)
+runs.test(linearmodel1$residuals)
+
+cor.test(norm5$combined_metric,linearmodel1$residuals)
+vif(linearmodel1)
+summary(linearmodel1)
