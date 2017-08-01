@@ -1,0 +1,282 @@
+USE bgt;
+SELECT* FROM certs;
+SELECT* FROM records;
+SELECT* FROM states;
+SELECT State_Name, COUNT(State_Name) 
+FROM records
+GROUP BY State_Name;
+SELECT DISTINCT State_Name 
+FROM records;
+
+
+
+
+####FROM
+    Occupations
+        RIGHT JOIN
+    Jobs ON Jobs.occupation_code = Occupations. occupation_code
+        LEFT JOIN 
+    Jobs_Skills ON Jobs.JobID = Jobs_Skills.JobID
+        LEFT JOIN
+    Skills on Skills.skill_id = Jobs_Skills.skill_id
+        LEFT JOIN
+    States on States.state_id = Jobs.state_id
+
+
+
+#finding total number of jobs
+SELECT COUNT(Jobs.State_ID) 
+FROM States
+	RIGHT JOIN
+    Jobs ON Jobs.state_id=States.State_ID;
+    
+##finding % of jobs by states
+SELECT 
+	States.state_name,
+    COUNT(Jobs.State_ID) AS Number_Of_Jobs,
+    COUNT(jobs.State_ID)/189461 AS Percent_Jobs
+FROM 
+	States
+		RIGHT JOIN 
+	Jobs ON Jobs.State_ID=States.State_ID
+GROUP BY state_Name
+ORDER BY Number_Of_Jobs DESC;
+
+
+
+#finding financial manager
+SELECT 
+	Occupations.Occupation_Name,
+    COUNT(Jobs.State_ID) AS Number_of_Jobs
+FROM 
+	States		
+		RIGHT JOIN
+	Jobs ON Jobs.state_id=States.State_ID
+		LEFT JOIN
+	Occupations ON Jobs.Occupation_Code=Occupations.Occupation_Code
+WHERE 
+	States.State_Name='NY'
+		AND Occupations.Occupation_Name IS NOT NULL
+GROUP BY Occupations.Occupation_Name
+ORDER BY Number_Of_Jobs DESC
+LIMIT 10;
+
+#checking posting duration
+SELECT 
+	Occupations.Occupation_Name, Jobs.Posting_Duration
+FROM 
+	States		
+		RIGHT JOIN
+	Jobs ON Jobs.state_id=States.State_ID
+		LEFT JOIN
+	Occupations ON Jobs.Occupation_Code=Occupations.Occupation_Code
+WHERE 
+	States.State_Name='NY'
+		AND Occupations.Occupation_Name IS NOT NULL
+GROUP BY Occupations.Occupation_Name
+ORDER BY Jobs.Posting_Duration DESC
+LIMIT 10;
+#distribution of post duration
+SELECT 
+	Occupations.Occupation_Name, Jobs.Posting_Duration
+FROM 
+	States		
+		RIGHT JOIN
+	Jobs ON Jobs.state_id=States.State_ID
+		LEFT JOIN
+	Occupations ON Jobs.Occupation_Code=Occupations.Occupation_Code
+WHERE 
+	States.State_Name='NY'
+		AND Occupations.Occupation_Name IS NOT NULL
+GROUP BY Occupations.Occupation_Name;
+
+#looking at particular jobs
+SELECT 
+	States.state_name, COUNT(Jobs.State_ID) AS Number_Of_Jobs
+FROM 
+	States		
+		RIGHT JOIN
+	Jobs ON Jobs.state_id=States.State_ID
+		LEFT JOIN
+	Occupations ON Jobs.Occupation_Code=Occupations.Occupation_Code
+WHERE 
+	Occupations.Occupation_Name IS NOT NULL
+	AND Occupations.Occupation_Name IN ('Physician','Physician Assistant')
+GROUP BY State_name
+ORDER BY Number_Of_Jobs DESC;
+
+#finding the levels
+SELECT DISTINCT exp_levels.Experience_Level
+FROM exp_levels;
+
+#Create View number 1 for Software Engineer
+CREATE VIEW HotCSSkillsNY AS
+ SELECT 
+    (COUNT(Skills.Skill_ID)) AS 'Count of Skills',
+    AVG(Jobs.Posting_Duration) AS 'PostDur',
+    Skills.skill_name
+FROM
+    Occupations
+        RIGHT JOIN
+    Jobs ON Jobs.occupation_code = Occupations. occupation_code
+        LEFT JOIN 
+    Jobs_Skills ON Jobs.JobID = Jobs_Skills.JobID
+        LEFT JOIN
+    Skills on Skills.skill_id = Jobs_Skills.skill_id
+        LEFT JOIN
+    States on States.state_id = Jobs.state_id
+WHERE
+    Occupations.occupation_name = 'Software Developer / Engineer'  
+        AND States.State_Name = 'NY'
+GROUP BY Skills.Skill_Name
+HAVING (COUNT(Skills.Skill_ID)) > 50 
+ORDER BY (COUNT(Skills.Skill_ID)) DESC;
+
+
+#create view #2 for registered nurse
+CREATE VIEW HotNurseSkillsNY AS
+ SELECT 
+    (COUNT(Skills.Skill_ID)) AS 'Count of Skills',
+    AVG(Jobs.Posting_Duration) AS 'PostDur',
+    Skills.skill_name
+FROM
+    Occupations
+        RIGHT JOIN
+    Jobs ON Jobs.occupation_code = Occupations. occupation_code
+        LEFT JOIN 
+    Jobs_Skills ON Jobs.JobID = Jobs_Skills.JobID
+        LEFT JOIN
+    Skills on Skills.skill_id = Jobs_Skills.skill_id
+        LEFT JOIN
+    States on States.state_id = Jobs.state_id
+WHERE
+    Occupations.occupation_name = 'Registered Nurse'  
+        AND States.State_Name = 'NY'
+GROUP BY Skills.Skill_Name
+HAVING (COUNT(Skills.Skill_ID)) > 50 
+ORDER BY (COUNT(Skills.Skill_ID)) DESC;
+
+#create view #3 for Store Managers
+CREATE VIEW HotStoreManagerSkillsNY AS
+ SELECT 
+    (COUNT(Skills.Skill_ID)) AS 'Count of Skills',
+    AVG(Jobs.Posting_Duration) AS 'PostDur',
+    Skills.skill_name
+FROM
+    Occupations
+        RIGHT JOIN
+    Jobs ON Jobs.occupation_code = Occupations. occupation_code
+        LEFT JOIN 
+    Jobs_Skills ON Jobs.JobID = Jobs_Skills.JobID
+        LEFT JOIN
+    Skills on Skills.skill_id = Jobs_Skills.skill_id
+        LEFT JOIN
+    States on States.state_id = Jobs.state_id
+WHERE
+    Occupations.occupation_name = 'Store Manager'  
+        AND States.State_Name = 'NY'
+GROUP BY Skills.Skill_Name
+HAVING (COUNT(Skills.Skill_ID)) > 50 
+ORDER BY (COUNT(Skills.Skill_ID)) DESC;
+
+#Create View #3 to visualize degree vs cert for registered nurse
+CREATE VIEW DegreevsCertNurseNY AS
+ SELECT 
+    (COUNT(Skills.Skill_ID)) AS 'Count of Skills',
+    AVG(Jobs.Posting_Duration) AS 'PostDur',
+    Skills.skill_name
+FROM
+    Occupations
+        RIGHT JOIN
+    Jobs ON Jobs.occupation_code = Occupations. occupation_code
+        LEFT JOIN 
+    Jobs_Skills ON Jobs.JobID = Jobs_Skills.JobID
+        LEFT JOIN
+    Skills on Skills.skill_id = Jobs_Skills.skill_id
+        LEFT JOIN
+    States on States.state_id = Jobs.state_id
+WHERE
+    Occupations.occupation_name = 'Store Manager'  
+        AND States.State_Name = 'NY'
+GROUP BY Skills.Skill_Name
+HAVING (COUNT(Skills.Skill_ID)) > 50 
+ORDER BY (COUNT(Skills.Skill_ID)) DESC;
+
+
+#For proposal 1, looking for top 10 cert 
+CREATE VIEW Top10PayingCert as
+SELECT j.jobID,t.Occupation_title,j.Salary,c.cert_name 
+FROM Jobs as j
+LEFT JOIN Jobs_Certs as jc on jc.jobID = j.jobID
+LEFT JOIN Certs as c on c.cert_id= jc.cert_id
+LEFT JOIN Titles as t on t.Title_ID = j.Title_ID
+LEFT JOIN States as s on s.state_id = j.state_id
+WHERE 
+	s.State_Name='NY'
+		AND t.title_id IS NOT NULL
+ORDER BY j.salary DESC 
+LIMIT 10;
+
+SELECT*
+FROM Top10PayingCert;
+
+
+#for proposal #2, finding top paying majors
+CREATE VIEW Top10PayingMaj as
+SELECT j.jobID,t.Occupation_title,j.Salary,m.edu_major
+FROM Jobs as j
+LEFT JOIN Jobs_majors as jm on jm.jobid= j.jobid
+LEFT JOIN majors as m on m.major_id = jm.major_id
+LEFT JOIN Titles as t on t.Title_ID = j.Title_ID
+LEFT JOIN States as s on s.state_id = j.state_id
+WHERE 
+	s.State_Name='NY'
+ORDER BY j.salary DESC 
+LIMIT 10;
+
+#for proposal #2, finding degrees associated with high demand jobs
+CREATE VIEW degreeandhdjobs AS
+    SELECT 
+        j.jobID, o.occupation_name, d.degree_level
+    FROM
+        Jobs AS j
+            LEFT JOIN
+        Jobs_degrees AS jd ON jd.jobid = j.jobid
+            LEFT JOIN
+        degrees AS d ON d.degree_id = jd.degree_id
+            LEFT JOIN
+        Titles AS t ON t.Title_ID = j.Title_ID
+            LEFT JOIN
+        States AS s ON s.state_id = j.state_id
+            LEFT JOIN
+        Occupations AS o ON o.occupation_code = j.occupation_code
+    WHERE
+        s.State_Name = 'NY'
+            AND occupation_name = 'Registered Nurse'
+            OR occupation_name = 'Software Developer / Engineer'
+            OR occupation_name = 'Store Manager';
+            
+#for proposal #3, finding gaps associated with high demand jobs
+CREATE VIEW talentgap3 AS
+    SELECT 
+        j.jobID, el.experience_level,sk.skill_name
+    FROM
+        Jobs AS j
+            LEFT JOIN
+		exp_levels as el on el.exp_id=j.exp_id
+			LEFT JOIN
+        Jobs_skills AS js ON js.jobID = j.jobid
+			LEFT JOIN
+		Skills as sk ON sk.skill_id=js.skill_id
+            LEFT JOIN
+        States AS s ON s.state_id = j.state_id
+            LEFT JOIN
+        Occupations AS o ON o.occupation_code = j.occupation_code
+    WHERE
+        s.State_Name = 'NY'
+            AND skill_name = 'C++'
+            OR skill_name= 'patient care'
+            OR skill_name = 'detail-oriented';
+    
+    
+
