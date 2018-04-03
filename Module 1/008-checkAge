@@ -1,0 +1,6 @@
+function checkAge(name,age){
+  if(if age<21){
+  return "Go Home, "+name+"!"
+  }
+  return "Welcome, "+name+"!"
+}
