@@ -1,0 +1,3 @@
+function isGreatThanTen(num){
+ return num>10;
+ }
