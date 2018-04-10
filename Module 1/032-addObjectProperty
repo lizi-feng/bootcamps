@@ -1,0 +1,3 @@
+function addObjectProperty(obj1, obj2, key){
+  return obj1[key]=obj2;
+}
