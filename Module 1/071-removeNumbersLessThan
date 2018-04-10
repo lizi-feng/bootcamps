@@ -1,0 +1,7 @@
+function removeNumbersLessThan(num, obj){
+  for(elem in obj){
+    if(obj[elem]<num){
+       delete obj[elem];
+    }
+  }
+}
