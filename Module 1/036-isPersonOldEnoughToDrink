@@ -1,0 +1,3 @@
+function isPersonOldEnoughToDrink(person, age){
+  return person.age>=21;
+}
