@@ -1,0 +1,3 @@
+function countCharacter(str,char){
+  return str.splice(char).length-1;
+  }
