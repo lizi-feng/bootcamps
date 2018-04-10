@@ -1,0 +1,4 @@
+function or(boolean1, boolean2){
+  return boolean1===true? true:boolean2;
+}
+  
