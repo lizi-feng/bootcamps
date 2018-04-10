@@ -1,0 +1,3 @@
+function getElementsUpTo (arr,index){
+  return arr.slice(0,index);
+}
