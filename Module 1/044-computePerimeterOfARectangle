@@ -1,0 +1,3 @@
+function computePerimeterOfARectangle(length, width){
+  return (length+width)*2
+}
