@@ -1,0 +1,3 @@
+function getAllLetters(word){
+  return word.split('');
+}
