@@ -1,0 +1,3 @@
+function computePower(num, exp){
+  return Math.pow(num,exp)
+  }
