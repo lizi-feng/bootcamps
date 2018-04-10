@@ -1,0 +1,3 @@
+function addToFront(arr,elem){
+  return arr.unshift(elem)
+}
