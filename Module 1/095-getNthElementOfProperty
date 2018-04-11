@@ -1,0 +1,5 @@
+function getNthElementOfProperty(obj,key, n){
+  if(Array.isArray(obj[key]) && obj[key].length && typeof obj[key]!=='undefined'){
+    return obj[key][n];
+}
+}
