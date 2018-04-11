@@ -1,0 +1,7 @@
+function countNumberOfKeys(obj){
+  var count=0;
+  for(elem in obj){
+        count++;
+  }
+  return count;
+}
