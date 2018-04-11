@@ -1,0 +1,12 @@
+function getElementsLessThan100AtProperty(obj,key){
+  newArr=[];
+  for(elem in obj[key]){
+    if (obj[key][elem]<100){
+      newArr.push(obj[key][elem]);
+    }
+    }
+    return newArr;
+}
+
+
+obj==> array
