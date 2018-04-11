@@ -1,0 +1,5 @@
+function getFirstElementOfProperty (obj,key){
+  if(Array.IsArray(obj[key]) && obj[key].length){
+  return obj[key][0]
+  }
+}
