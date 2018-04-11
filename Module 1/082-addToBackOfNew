@@ -1,0 +1,5 @@
+function addToBackOfNew(arr,elem){
+  var newArr=arr.slice();
+  newArr.push(elem);
+  return newArr;
+}
