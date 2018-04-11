@@ -1,0 +1,7 @@
+function removeNumberValues(obj){
+  for(elem in obj){
+    if(typeof obj[elem]==='number'){
+      delete obj[elem];
+    }
+  }
+}
