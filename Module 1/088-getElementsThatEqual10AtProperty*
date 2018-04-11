@@ -1,0 +1,9 @@
+functino getElementsThatEqual10AtProperty(obj,key){
+  for(elem in obj[key]){
+    if(obj[key][elem]===10){
+    var newArr=[];
+    newArr.push(obj[key][elem]);
+    }
+    }
+    return newArr;
+}
