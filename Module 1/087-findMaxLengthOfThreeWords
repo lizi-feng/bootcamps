@@ -1,6 +1,4 @@
 function findMaxLengthOfThreeWords(word1,word2,word3){
-  newArr=[word1,word2,word3]
-  newArr.reduce(function (x,y){
-    word1.length>word2.length? word1.length: word2.length
-    })
+  newArr=[word1.length,word2.length,word3.length];
+  newArr.reduce((x,y)=> Math.max(x,y));
 }
