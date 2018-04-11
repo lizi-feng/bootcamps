@@ -1,0 +1,7 @@
+function convertDoubleSpaceToSingle(str){
+  if(str){
+    newArray=str.split('  ')
+    return newArray.join(' ')
+  }
+  return '';
+}
