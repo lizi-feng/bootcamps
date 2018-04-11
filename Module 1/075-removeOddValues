@@ -1,0 +1,7 @@
+function removeOddValues(obj){
+  for(elem in obj){
+    if(obj[elem]%2!==0){
+    delete obj[elem];
+    }
+  }
+}
