@@ -1,0 +1,5 @@
+function addToFrontOfNew(arr,elem){
+  var newArr=arr.slice();
+  newArr.unshift(elem);
+  return newArr;
+}
